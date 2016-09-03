@@ -1,0 +1,10 @@
+{ "channels":
+  { "#examplechannel1": {},
+    "#examplechannel2": {"password": "zePassword"}
+  },
+  "routes":
+  [
+      { "port": 514, "channel": ["#examplechannel1", "#examplechannel2"] },
+      { "port": 55514, "channel": ["#examplechannel1"] }
+  ]
+}

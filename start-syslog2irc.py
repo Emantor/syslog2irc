@@ -16,6 +16,7 @@ Receive syslog messages via UDP and show them on IRC.
 from syslog2irc.argparser import parse_args
 from syslog2irc.irc import Channel
 from syslog2irc.main import start
+import json
 
 
 def start_with_args(routes, **options):
@@ -30,15 +31,18 @@ def start_with_args(routes, **options):
 
 
 if __name__ == '__main__':
-    # IRC channels to join
-    channel1 = Channel('#examplechannel1')
-    channel2 = Channel('#examplechannel2', password='zePassword')
+    # load config from file
+    config = json.load(open("sample_config.json"))
+    # Create an dictionary of Channel objects
+    channel_list = {}
+    for k,v in config['channels'].items():
+        channel_list[k] = Channel(k,**v)
 
-    # routing for syslog messages from the ports on which they are
-    # received to the IRC channels they should be announced on
-    routes = {
-          514: [channel1, channel2],
-        55514: [channel2],
-    }
+    # Create route mappings
+    routes = {}
+    for i in config['routes']:
+        routes[i['port']] = []
+        for j in i['channel']:
+            routes[i['port']].append(channel_list[j])
 
     start_with_args(routes)
